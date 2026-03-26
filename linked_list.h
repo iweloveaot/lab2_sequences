@@ -75,7 +75,9 @@ public:
         return &sub;
     }
 
-    int GetLength() const { return length; }
+    int GetLength() const { 
+        return length;
+    }
 
     void Append(T item) {
         Node *newNode = new Node(item, nullptr);
