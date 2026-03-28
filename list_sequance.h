@@ -9,8 +9,8 @@ class ListSequence : public Sequence<T> {
 private:
 
     LinkedList<T>* list;
-    
-    virtual ListSequenceBase<T>* Clone() const = 0;
+
+    // virtual ListSequenceBase<T>* Clone() const = 0;
 
 public:
     ListSequence() : list(new LinkedList<T>()) {}
@@ -37,70 +37,70 @@ public:
         return list->GetLength();
     }
 
-    ListSequence<T>* GetSubsequence(int startIndex, int endIndex) const override {
-        LinkedList<T> sub = list->GetSubList(startIndex, endIndex);
-        ListSequence<T>* result = Clone();
-        delete result->list;
-        result->list = new LinkedList<T>(sub);
-        return result;
-    }
+    // ListSequence<T>* GetSubsequence(int startIndex, int endIndex) const override {
+    //     LinkedList<T> sub = list->GetSubList(startIndex, endIndex);
+    //     // ListSequence<T>* result = Clone();
+    //     delete result->list;
+    //     result->list = new LinkedList<T>(sub);
+    //     return result;
+    // }
 
     T operator[](int index) const override {
         return Get(index);
     }
 
-    Sequence<T>* Map(T (*func)(T)) const override {
-        LinkedList<T> newList;
-        int sz = list->GetLength();
-        for (int i = 0; i < sz; ++i)
-            newList.Append(func(list->Get(i)));
-        ListSequenceBase<T>* result = Clone();
-        delete result->list;
-        result->list = new LinkedList<T>(newList);
-        return result;
-    }
+    // Sequence<T>* Map(T (*func)(T)) const override {
+    //     LinkedList<T> newList;
+    //     int sz = list->GetLength();
+    //     for (int i = 0; i < sz; ++i)
+    //         newList.Append(func(list->Get(i)));
+    //     ListSequenceBase<T>* result = Clone();
+    //     delete result->list;
+    //     result->list = new LinkedList<T>(newList);
+    //     return result;
+    // }
 
-    Sequence<T>* Where(bool (*pred)(T)) const override {
-        LinkedList<T> filtered;
-        int sz = list->GetLength();
-        for (int i = 0; i < sz; ++i) {
-            T val = list->Get(i);
-            if (pred(val))
-                filtered.Append(val);
-        }
-        ListSequenceBase<T>* result = Clone();
-        delete result->list;
-        result->list = new LinkedList<T>(filtered);
-        return result;
-    }
+    // Sequence<T>* Where(bool (*pred)(T)) const override {
+    //     LinkedList<T> filtered;
+    //     int sz = list->GetLength();
+    //     for (int i = 0; i < sz; ++i) {
+    //         T val = list->Get(i);
+    //         if (pred(val))
+    //             filtered.Append(val);
+    //     }
+    //     ListSequenceBase<T>* result = Clone();
+    //     delete result->list;
+    //     result->list = new LinkedList<T>(filtered);
+    //     return result;
+    // }
 
-    T Reduce(T (*func)(T, T), T init) const override {
-        int sz = list->GetLength();
-        T acc = init;
-        for (int i = 0; i < sz; ++i)
-            acc = func(acc, list->Get(i));
-        return acc;
-    }
+    // T Reduce(T (*func)(T, T), T init) const override {
+    //     int sz = list->GetLength();
+    //     T acc = init;
+    //     for (int i = 0; i < sz; ++i)
+    //         acc = func(acc, list->Get(i));
+    //     return acc;
+    // }
 
-    Option<T> FindFirst(bool (*pred)(T)) const override {
-        int sz = list->GetLength();
-        for (int i = 0; i < sz; ++i) {
-            T val = list->Get(i);
-            if (!pred || pred(val))
-                return Option<T>(val);
-        }
-        return Option<T>();
-    }
+    // Option<T> FindFirst(bool (*pred)(T)) const override {
+    //     int sz = list->GetLength();
+    //     for (int i = 0; i < sz; ++i) {
+    //         T val = list->Get(i);
+    //         if (!pred || pred(val))
+    //             return Option<T>(val);
+    //     }
+    //     return Option<T>();
+    // }
 
-    Option<T> FindLast(bool (*pred)(T)) const override {
-        int sz = list->GetLength();
-        for (int i = sz - 1; i >= 0; --i) {
-            T val = list->Get(i);
-            if (!pred || pred(val))
-                return Option<T>(val);
-        }
-        return Option<T>();
-    }
+    // Option<T> FindLast(bool (*pred)(T)) const override {
+    //     int sz = list->GetLength();
+    //     for (int i = sz - 1; i >= 0; --i) {
+    //         T val = list->Get(i);
+    //         if (!pred || pred(val))
+    //             return Option<T>(val);
+    //     }
+    //     return Option<T>();
+    // }
 };
 
 #endif /* _LIST_SEQUANCE_H_ */

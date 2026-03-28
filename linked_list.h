@@ -1,6 +1,8 @@
 #ifndef _LINKED_LIST_H_
 #define _LINKED_LIST_H_
 
+#include <iostream>
+#include "exceptions.h"
 
 template <typename T>
 class LinkedList {
@@ -19,13 +21,15 @@ public:
     LinkedList() : first(nullptr), last(nullptr), length(0) {}
 
     LinkedList(T* items, int count) : first(nullptr), last(nullptr), length(0) {
+        if (count < 0)
+            throw InvalidArgumentException("Negative count");
         for (int i=0; i < count; ++i) {
             Append(items[i]);
         }
     }
 
-    LinkedList(const LinkedList<T>& other) : first(nullptr), last(nullptr), length(0) { // проверка на пустоту
-        Node *current = other->first; 
+    LinkedList(const LinkedList<T>& other) : first(nullptr), last(nullptr), length(0) {
+        Node *current = other.first; 
         while (current) {
             Append(current->data);            
             current = current->next;
@@ -40,39 +44,37 @@ public:
         }
     }
 
-    T GetFirst() const { // IndexOutOfRange (если список пуст) 
+    T GetFirst() const {
         if (length == 0) 
-            throw EmptyContainer("List is empty");
+            throw EmptyContainerException("List is empty");
         return first->data;
     }
 
-    T GetLast() const { // IndexOutOfRange (если список пуст) 
+    T GetLast() const {
         if (length == 0) 
-            throw EmptyContainer("List is empty");
+            throw EmptyContainerException("List is empty");
         return last->data;
     }
 
-    T Get(int index) const { // IndexOutOfRange (если индекс отрицательный или больше/равен числу элементов) 
+    T Get(int index) const { 
         if (index < 0 || index >= length)
-            throw IndexOutOfRange("Index out of range in LinkedList::Get");
+            throw IndexOutOFRangeException("Index out of range in LinkedList::Get");
         Node* current = first;
         for (int i = 0; i < index; i++)
             current = current->next;
         return current->data;
     }
 
-    LinkedList<T>* GetSubList(int startIndex, int endIndex) const {
+    void GetSubList(int startIndex, int endIndex, LinkedList<T> *sub) const {
         if (startIndex < 0 || endIndex >= length || startIndex > endIndex)
-            throw IndexOutOfRange("Invalid sublist indices");
-        LinkedList<T> sub;
-        Node* cur = head;
+            throw IndexOutOFRangeException("Invalid sublist indexes");
+        Node* cur = first;
         for (int i=0; i<startIndex; i++)
             cur = cur->next;
         for (int i=startIndex; i<=endIndex; i++) {
-            sub.Append(cur->data);
+            (*sub).Append(cur->data);
             cur = cur->next;
         }
-        return &sub;
     }
 
     int GetLength() const { 
@@ -83,7 +85,7 @@ public:
         Node *newNode = new Node(item, nullptr);
         if (first) 
             last->next = newNode;
-        else 
+        else
             first = newNode;
         last = newNode;
         length++;
@@ -101,7 +103,7 @@ public:
 
     void InsertAt(T item, int index) {
         if (index < 0 || index > length)
-            throw IndexOutOfRange("Index out of range in LinkedList::InsertAt");
+            throw IndexOutOFRangeException("Index out of range in LinkedList::InsertAt");
         if (index == 0) {
             Prepend(item);
             return;
@@ -118,29 +120,33 @@ public:
         length++;
     }
 
-    LinkedList<T>* Concat(const LinkedList<T>& other) const {
-        LinkedList<T> result = this;
-        Node* current = other->head;
-        while (current) {
-            result->Append(current->data);
-            current = current->next;
+    LinkedList<T> Concat(const LinkedList<T>& other) const {
+        LinkedList<T> result = *this;
+        Node* cur = other.first;
+        while (cur) {
+            result.Append(cur->data);
+            cur = cur->next;
         }
         return result;
     }
 
-    // LinkedList<T>& operator=(const LinkedList<T>& other) {
-    //     if (this != &other) {
-    //         while (head) {
-    //             Node* tmp = head;
-    //             head = head->next;
-    //             delete tmp;
-    //         }
-    //         head = tail = nullptr;
-    //         length = 0;
-    //         copyFrom(other);
-    //     }
-    //     return *this;
-    // }
+    LinkedList<T>& operator=(const LinkedList<T>& other) {
+        if (this != &other) {
+            while (first) {
+                Node* tmp = first;
+                first = first->next;
+                delete tmp;
+            }
+            first = last = nullptr;
+            length = 0;
+            Node *current = other.first; 
+            while (current) {
+                Append(current->data);            
+                current = current->next;
+            } 
+        }
+        return *this;
+    }
 };
 
 #endif // _LINKED_LIST_H_

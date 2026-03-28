@@ -25,8 +25,8 @@ public:
     virtual Sequence<T>* Map(T (*func)(T)) const = 0;
     virtual Sequence<T>* Where(bool (*pred)(T)) const = 0;
     virtual T Reduce(T (*func)(T, T), T init) const = 0;
-    virtual Option<T> FindFirst(bool (*pred)(T) = nullptr) const = 0;
-    virtual Option<T> FindLast(bool (*pred)(T) = nullptr) const = 0;
+    // virtual Option<T> FindFirst(bool (*pred)(T) = nullptr) const = 0;
+    // virtual Option<T> FindLast(bool (*pred)(T) = nullptr) const = 0;
 
     // Indexed access via operator[]
     virtual T operator[](int index) const = 0;
