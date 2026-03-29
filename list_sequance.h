@@ -7,45 +7,69 @@
 template <typename T>
 class ListSequence : public Sequence<T> {
 private:
-
-    LinkedList<T>* list;
-
+    LinkedList<T> list; 
     // virtual ListSequenceBase<T>* Clone() const = 0;
 
+protected:
+    virtual Sequence<T>* AppendImplict(const T &item) override {
+        list.Append(item);
+        return this;
+    };
+
+    virtual Sequence<T>* PrependImplict(const T &item) override {
+        list.Prepend(item);
+        return this;
+    }
+
+    virtual Sequence<T>* InsertAtImplict(const T &item, int index) override {
+        list.InsertAt(item, index);
+        return this;
+    }
+
+    Sequence<T>* Concat(const Sequence<T>* other) const override {
+        ListSequence<T> *sub_seq = new ListSequence<T>();
+        sub_seq->list = *(list.Concat(other->list));
+        return sub_seq;
+    }
+
+
+
 public:
-    ListSequence() : list(new LinkedList<T>()) {}
-    ListSequence(T* items, int count) : list(new LinkedList<T>(items, count)) {}
-    ListSequence(const LinkedList<T>& lst) : list(new LinkedList<T>(lst)) {}
-    ListSequence(const ListSequence<T>& other) : list(new LinkedList<T>(*(other->list))) {}
-    virtual ~ListSequence() { 
-        delete list;
+    ListSequence() : list(LinkedList<T>()) {}
+    ListSequence(const T* items, int count) : list(LinkedList<T>(items, count)) {}
+    ListSequence(const LinkedList<T> &lst) : list(LinkedList<T>(lst)) {}
+    ListSequence(const ListSequence<T> &other) : list(LinkedList<T>(other.list)) {}
+    ~ListSequence() {}
+
+    const T& GetFirst() const override {
+        return list.GetFirst();
     }
 
-    T GetFirst() const override {
-        return list->GetFirst();
+    const T& GetLast() const override {
+        return list.GetLast();
     }
 
-    T GetLast() const override {
-        return list->GetLast();
-    }
-
-    T Get(int index) const override {
-        return list->Get(index);
+    const T& Get(int index) const override {
+        return list.Get(index);
     }
 
     int GetLength() const override {
-        return list->GetLength();
+        return list.GetLength();
     }
 
-    // ListSequence<T>* GetSubsequence(int startIndex, int endIndex) const override {
-    //     LinkedList<T> sub = list->GetSubList(startIndex, endIndex);
-    //     // ListSequence<T>* result = Clone();
-    //     delete result->list;
-    //     result->list = new LinkedList<T>(sub);
-    //     return result;
-    // }
+    Sequence<T>* GetSubsequence(int startIndex, int endIndex) const override {
+        ListSequence<T> *sub_seq = new ListSequence<T>();
+        sub_seq->list = *(list.GetSubList(startIndex, endIndex));
+        return sub_seq;
+    }
 
-    T operator[](int index) const override {
+    Sequence<T>* Concat(const Sequence<T>* other) const override {
+        ListSequence<T> *sub_seq = new ListSequence<T>();
+        sub_seq->list = *(list.Concat(other->list));
+        return sub_seq;
+    }
+    
+    const T& operator[](int index) const override {
         return Get(index);
     }
 
