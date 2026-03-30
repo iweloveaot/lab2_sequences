@@ -4,11 +4,12 @@
 template <typename T>
 class Sequence {
 protected:
-    virtual Sequence<T>* Instance() const = 0;
+    virtual Sequence<T>* Instance() = 0;
     virtual Sequence<T>* AppendImplict(const T &item) = 0;
     virtual Sequence<T>* PrependImplict(const T &item) = 0;
     virtual Sequence<T>* InsertAtImplict(const T &item, int index) = 0;
-    
+    virtual Sequence<T>* ConcatImplict(const Sequence<T> *other) = 0;
+
 public:
     virtual const T& GetFirst() const = 0;
     virtual const T& GetLast() const = 0;
@@ -16,7 +17,7 @@ public:
     virtual Sequence<T>* GetSubsequence(int startIndex, int endIndex) const = 0;
     virtual int GetLength() const = 0;
 
-    virtual Sequence<T>* Concat(const Sequence<T>* other) const = 0;
+    
     virtual const T& operator[](int index) const = 0;
 
     virtual Sequence<T>* Append(const T &item) {
@@ -31,8 +32,11 @@ public:
         return Instance()->InsertAtImplict(item, index);
     }
 
+    virtual Sequence<T>* Concat(const Sequence<T> *other) {
+        return Instance()->ConcatImplict(other);
+    }
 
-    // Map-Reduce
+ // Map-Reduce
     // virtual Sequence<T>* Map(T (*func)(T)) const = 0;
     // virtual Sequence<T>* Where(bool (*pred)(T)) const = 0;
     // virtual T Reduce(T (*func)(T, T), T init) const = 0;
