@@ -1,33 +1,33 @@
-#ifndef _LIST_SEQUANCE_H_
-#define _LIST_SEQUANCE_H_
+#ifndef _ARRAY_SEQUANCE_H_
+#define _ARRAY_SEQUANCE_H_
 
-#include "linked_list.h"
+#include "dynamic_array.h"
 #include "sequance.h"
 
 template <typename T>
-class ListSequence : public Sequence<T> {
+class ArraySequence : public Sequence<T> {
 private:
-    LinkedList<T> list; 
+    DynamicArray<T> list; 
 
 protected:
     virtual Sequence<T>* CreateSequence(const LinkedList<T> &lst) const = 0;
     virtual Sequence<T>* Instance() = 0;
-    virtual Sequence<T>* AppendImplict(const T &item) override {
+    virtual Sequence<T>* AppendImplict(const T &item) override {  // переписать без апенда
         list.Append(item);
         return this;
     };
 
-    virtual Sequence<T>* PrependImplict(const T &item) override {
+    virtual Sequence<T>* PrependImplict(const T &item) override {  // переписать без препенда
         list.Prepend(item);
         return this;
     }
 
-    virtual Sequence<T>* InsertAtImplict(const T &item, int index) override {
+    virtual Sequence<T>* InsertAtImplict(const T &item, int index) override {  // переписать без инсёрта
         list.InsertAt(item, index);
         return this;
     }
 
-    virtual Sequence<T>* ConcatImplict(const Sequence<T>* other) override {
+    virtual Sequence<T>* ConcatImplict(const Sequence<T>* other) override {  // переписать
         for (int i = 0; i < other->GetLength(); i++) {
             list.Append(other->Get(i));
         }

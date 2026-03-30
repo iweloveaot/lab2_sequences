@@ -17,6 +17,16 @@ private:
     Node *last;
     int length;
 
+    Node* createNode(const T &val, Node *n = nullptr) {
+        Node *newNode = nullptr;
+        try {
+            newNode = new Node(value, next);
+        } catch (...) {
+            throw MemoryAllocationException();
+        }
+        return newNode;
+    }
+
 public:
     LinkedList() : first(nullptr), last(nullptr), length(0) {}
 
@@ -68,7 +78,14 @@ public:
     LinkedList<T>* GetSubList(int startIndex, int endIndex) const {
         if (startIndex < 0 || endIndex >= length || startIndex > endIndex)
             throw IndexOutOFRangeException("Invalid sublist indexes");
-        LinkedList<T> *sub_list = new LinkedList<T>();
+
+        LinkedList<T> *sub_list = nullptr;
+        try {
+            sub_list = new LinkedList<T>();
+        } catch (...) {
+            throw MemoryAllocationException();
+        }
+
         Node *cur = first;
         for (int i = 0; i < startIndex; i++)
             cur = cur->next;
@@ -84,7 +101,7 @@ public:
     }
 
     void Append(const T &item) {
-        Node *newNode = new Node(item, nullptr);
+        Node *newNode = createNode(item);
         if (first) 
             last->next = newNode;
         else
@@ -94,7 +111,7 @@ public:
     }
 
     void Prepend(const T &item) {
-        Node *newNode = new Node(item, nullptr);
+        Node *newNode = createNode(item);
         if (first) 
             newNode->next = first;
         else 
@@ -114,18 +131,23 @@ public:
             Append(item);
             return;
         }
-        Node* current = first;
+        Node *current = first;
         for (int i = 0; i < index-1; i++)
             current = current->next;
-        Node* newNode = new Node(item, current->next);
+        Node *newNode = createNode(item, current->next);
         current->next = newNode;
         length++;
     }
 
     LinkedList<T>* Concat(const LinkedList<T> &other) const {
-        LinkedList<T> *result = new LinkedList<T>(); 
+        LinkedList<T> *result = nullptr;
+        try {
+            result = new LinkedList<T>();
+        } catch (...) {
+            throw MemoryAllocationException();
+        }
         *result = *this;
-        Node* cur = other.first;
+        Node *cur = other.first;
         while (cur) {
             result->Append(cur->data);
             cur = cur->next;
@@ -150,6 +172,7 @@ public:
         }
         return *this;
     }
+   
 };
 
 #endif // _LINKED_LIST_H_

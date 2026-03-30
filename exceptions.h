@@ -29,6 +29,12 @@ public:
         : BaseException(msg) {}    
 };
 
+class MemoryAllocationException : public BaseException {
+public:
+    MemoryAllocationException(const char* msg = "Failed to allocate memory")
+        : BaseException(msg) {}    
+};
+
 
 
 #endif /* _EXCEPTIONS_H_ */

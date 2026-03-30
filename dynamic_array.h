@@ -29,7 +29,7 @@ public:
     DynamicArray(T* items, int count) : size(count), capacity(count) {
         if (count < 0) throw InvalidArgument("Negative count");
         data = new T[capacity];
-        for (int i = 0; i < count; ++i)
+        for (int i = 0; i < count; i++)
             data[i] = items[i];
     }
 
@@ -72,6 +72,13 @@ public:
         if (newSize == size)    
             return;
         ensureCapacity(newSize);
+        if (newSize < size) {
+            newData = new T[capacity];
+            for (int i = 0; i < newSize; i++)
+                newData[i] = data[i];
+            delete[] data;
+            data = newData;
+        }
         if (newSize > size) {
             for (int i=size; i<newSize; ++i++)
                 data[i] = T();
@@ -79,7 +86,17 @@ public:
         size = newSize;
     }
 
-    
+    DynamicArray<T>& operator=(const DynamicArray<T>& other) {
+        if (this != &other) {
+            delete[] data;
+            size = other.size;
+            capacity = other.capacity;
+            data = new T[capacity];
+            for (int i = 0; i < size; ++i)
+                data[i] = other.data[i];
+        }
+        return *this;
+    }
 };
 
 #endif // _DYNAMIC_ARRAY_H_
