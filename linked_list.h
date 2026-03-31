@@ -20,7 +20,7 @@ private:
     Node* createNode(const T &val, Node *n = nullptr) {
         Node *newNode = nullptr;
         try {
-            newNode = new Node(value, next);
+            newNode = new Node(val, n);
         } catch (...) {
             throw MemoryAllocationException();
         }
@@ -68,7 +68,7 @@ public:
 
     const T& Get(int index) const { 
         if (index < 0 || index >= length)
-            throw IndexOutOFRangeException("Index out of range in LinkedList::Get");
+            throw IndexOutOfRangeException("Index out of range in LinkedList::Get");
         Node *current = first;
         for (int i = 0; i < index; i++)
             current = current->next;
@@ -77,7 +77,7 @@ public:
 
     LinkedList<T>* GetSubList(int startIndex, int endIndex) const {
         if (startIndex < 0 || endIndex >= length || startIndex > endIndex)
-            throw IndexOutOFRangeException("Invalid sublist indexes");
+            throw IndexOutOfRangeException("Invalid sublist indexes");
 
         LinkedList<T> *sub_list = nullptr;
         try {
@@ -122,7 +122,7 @@ public:
 
     void InsertAt(const T &item, int index) {
         if (index < 0 || index > length)
-            throw IndexOutOFRangeException("Index out of range in LinkedList::InsertAt");
+            throw IndexOutOfRangeException("Index out of range in LinkedList::InsertAt");
         if (index == 0) {
             Prepend(item);
             return;

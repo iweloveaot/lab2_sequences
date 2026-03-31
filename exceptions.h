@@ -23,9 +23,9 @@ public:
         : BaseException(msg) {}    
 };
 
-class IndexOutOFRangeException : public BaseException {
+class IndexOutOfRangeException : public BaseException {
 public:
-    IndexOutOFRangeException(const char* msg = "Index out of range")
+    IndexOutOfRangeException(const char* msg = "Index out of range")
         : BaseException(msg) {}    
 };
 

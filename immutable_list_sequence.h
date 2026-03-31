@@ -1,7 +1,7 @@
 #ifndef _IMMUTABLE_LIST_SEQUANCE_H_
 #define _IMMUTABLE_LIST_SEQUANCE_H_
 
-#include "list_sequance.h"
+#include "list_sequence.h"
 
 template <typename T>
 class ImmutableListSequence : public ListSequence<T> {
