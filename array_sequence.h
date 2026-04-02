@@ -88,6 +88,8 @@ public:
 
     Sequence<T>* GetSubsequence(int startIndex, int endIndex) const override 
     {
+        if (startIndex < 0 || endIndex >= array.GetSize() || startIndex > endIndex)
+            throw IndexOutOfRangeException("Invalid subsequence indexes");
         DynamicArray<T> tmp_array;
         int tmp_ind = 0;
         for (int i = startIndex; i <= endIndex; i++) {

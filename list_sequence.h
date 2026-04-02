@@ -57,7 +57,7 @@ public:
         return list.GetLength();
     }
 
-     Sequence<T>* GetSubsequence(int startIndex, int endIndex) const override 
+    Sequence<T>* GetSubsequence(int startIndex, int endIndex) const override 
     {
         LinkedList<T> *tmp_list = list.GetSubList(startIndex, endIndex);
         Sequence<T>* sub_seq = CreateSequence(*tmp_list);

@@ -1,16 +1,21 @@
 #include <iostream>
-#include "mutable_array_sequence.h"
-#include "immutable_array_sequence.h"
+#include "bit_sequence.h"
 
 int main() {
-    int items[] = {1, 3, 5, 6, 7};
-    MutableArraySequence<int> arr = MutableArraySequence<int>(items, 5);
-    MutableArraySequence<int> arr1;
-    arr1.Prepend(2);
-    arr1.Append(9);
-    arr1.InsertAt(11, 1);
-    arr.Concat(&arr1);
-    for (int i=0; i<arr.GetLength(); i++) std::cout << arr.Get(i) << " ";
+    bool items[] = {true, false, true, true, true, false};
+    bool itemsforbits[] = {true, true, true, false};
+    Bit biits[4];
+    for (int i=0; i<4; i++) {
+        biits[i] = Bit(itemsforbits[i]);
+    }
+    DynamicArray<Bit> arr = DynamicArray<Bit>(biits, 4);
+    BitSequence bits1 = BitSequence(items, 6);
+    BitSequence bits2 = BitSequence(biits, 4);
+    BitSequence bits3 = BitSequence();
+    BitSequence bits4 = BitSequence(7);
+    BitSequence bits5 = BitSequence(arr);
+    BitSequence bits6 = BitSequence(bits4);
+    std::cout << bits1.GetLength() << " " << bits2.GetLength() << " " << bits3.GetLength() << " " << bits4.GetLength() << " " << bits5.GetLength() << " " << bits6.GetLength();
 }
 
 
