@@ -133,6 +133,25 @@ public:
         *result = reduced;
     }
 
+    Option<T> TryGetFirst(bool (*pred)(const T&) = nullptr) const {
+        for (int i = 0; i < array.GetSize(); i++) {
+            const T& val = Get(i);
+            if (!pred || pred(val))
+                return Option<T>(val);
+        }
+        return Option<T>::None();
+    }
+
+    Option<T> TryGetLast(bool (*pred)(const T&) = nullptr) const {
+        for (int i = array.GetSize() - 1; i >= 0; i--) {
+            const T& val = Get(i);
+            if (!pred || pred(val))
+                return Option<T>(val);
+        }
+        return Option<T>::None();
+    }
+
+
     // Option<T> FindFirst(bool (*pred)(T)) const override {
     //     int sz = list->GetLength();
     //     for (int i = 0; i < sz; ++i) {

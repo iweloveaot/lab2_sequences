@@ -1,5 +1,7 @@
 #ifndef _SEQUANCE_H_
 #define _SEQUANCE_H_
+#include "option.h"
+
 
 template <typename T>
 class Sequence {
@@ -36,9 +38,8 @@ public:
     virtual Sequence<T>* Map(T (*func)(const T&)) const = 0;
     virtual Sequence<T>* Where(bool (*pred)(const T&)) const = 0;
     virtual void Reduce(T (*func)(const T&, const T&), const T &init, T *result) const = 0;
-
-    // virtual Option<T> FindFirst(bool (*pred)(T) = nullptr) const = 0;
-    // virtual Option<T> FindLast(bool (*pred)(T) = nullptr) const = 0;
+    virtual Option<T> TryGetFirst(bool (*pred)(const T&) = nullptr) const = 0;
+    virtual Option<T> TryGetLast(bool (*pred)(const T&) = nullptr) const = 0;
 
     virtual const T& operator[](int index) const = 0;
 

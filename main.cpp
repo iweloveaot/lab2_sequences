@@ -1,32 +1,24 @@
 #include <iostream>
 #include "mutable_array_sequence.h"
-#include "immutable_array_sequence.h"
-#include "mutable_list_sequence.h"
-#include "immutable_list_sequence.h"
+#include "option.h"
 
-int add(const int &el, const int &n) {
-    return el + n;
+bool isEven(const int &el) {
+    return (el % 2 == 0);
 }
 
 int main() {
 
-    int items[] = {1, 2, 3, 4, 5 , 6, 7};
-    MutableArraySequence<int> arr1 = MutableArraySequence<int>(items, 7);
-    ImmutableArraySequence<int> arr2 = ImmutableArraySequence<int>(items, 7);
-    int add1;
-    arr1.Reduce(*add, 3, &add1);
-    int add2;
-    arr2.Reduce(*add, 4, &add2);
-    std::cout << add1 << " ";
-    std::cout << add2 << " ";
+    MutableArraySequence<int> arr1;
+    Option<int> res1 = arr1.TryGetFirst(*isEven);
+    if (res1.HasValue()) std::cout << res1.GetValue() << " ";
+    else std::cout << "None" << " ";
+    
+    arr1.Append(1);
+    arr1.Append(3);
+    arr1.Append(5);
 
-    MutableListSequence<int> list1 = MutableListSequence<int>(items, 7);
-    ImmutableListSequence<int> list2 = ImmutableListSequence<int>(items, 7);
-    int add11;
-    list1.Reduce(*add, 5, &add11);
-    int add22;
-    list2.Reduce(*add, 6, &add22);
-    std::cout << add11 << " ";
-    std::cout << add22 << " ";
+    Option<int> res2 = arr1.TryGetLast(*isEven);
+    if (res2.HasValue()) std::cout << res2.GetValue() << " ";
+    else std::cout << "None" << " ";
 
 }    

@@ -99,26 +99,23 @@ public:
         *result = reduced;
     }
 
+    Option<T> TryGetFirst(bool (*pred)(const T&) = nullptr) const {
+        for (int i = 0; i < list.GetLength(); ++i) {
+            const T& val = Get(i);
+            if (!pred || pred(val))
+                return Option<T>(val);
+        }
+        return Option<T>::None();
+    }
 
-    // Option<T> FindFirst(bool (*pred)(T)) const override {
-    //     int sz = list->GetLength();
-    //     for (int i = 0; i < sz; ++i) {
-    //         T val = list->Get(i);
-    //         if (!pred || pred(val))
-    //             return Option<T>(val);
-    //     }
-    //     return Option<T>();
-    // }
-
-    // Option<T> FindLast(bool (*pred)(T)) const override {
-    //     int sz = list->GetLength();
-    //     for (int i = sz - 1; i >= 0; --i) {
-    //         T val = list->Get(i);
-    //         if (!pred || pred(val))
-    //             return Option<T>(val);
-    //     }
-    //     return Option<T>();
-    // }
+    Option<T> TryGetLast(bool (*pred)(const T&) = nullptr) const {
+        for (int i = list.GetLength() - 1; i >= 0; --i) {
+            const T& val = Get(i);
+            if (!pred || pred(val))
+                return Option<T>(val);
+        }
+        return Option<T>::None();
+    }
 };
 
 #endif /* _LIST_SEQUANCE_H_ */
