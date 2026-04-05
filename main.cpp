@@ -1,21 +1,32 @@
 #include <iostream>
-#include "bit_sequence.h"
+#include "mutable_array_sequence.h"
+#include "immutable_array_sequence.h"
+#include "mutable_list_sequence.h"
+#include "immutable_list_sequence.h"
 
-int main() {
-    bool items[] = {true, false, true, true, true, false};
-    bool itemsforbits[] = {true, true, true, false};
-    Bit biits[4];
-    for (int i=0; i<4; i++) {
-        biits[i] = Bit(itemsforbits[i]);
-    }
-    DynamicArray<Bit> arr = DynamicArray<Bit>(biits, 4);
-    BitSequence bits1 = BitSequence(items, 6);
-    BitSequence bits2 = BitSequence(biits, 4);
-    BitSequence bits3 = BitSequence();
-    BitSequence bits4 = BitSequence(7);
-    BitSequence bits5 = BitSequence(arr);
-    BitSequence bits6 = BitSequence(bits4);
-    std::cout << bits1.GetLength() << " " << bits2.GetLength() << " " << bits3.GetLength() << " " << bits4.GetLength() << " " << bits5.GetLength() << " " << bits6.GetLength();
+int add(const int &el, const int &n) {
+    return el + n;
 }
 
+int main() {
 
+    int items[] = {1, 2, 3, 4, 5 , 6, 7};
+    MutableArraySequence<int> arr1 = MutableArraySequence<int>(items, 7);
+    ImmutableArraySequence<int> arr2 = ImmutableArraySequence<int>(items, 7);
+    int add1;
+    arr1.Reduce(*add, 3, &add1);
+    int add2;
+    arr2.Reduce(*add, 4, &add2);
+    std::cout << add1 << " ";
+    std::cout << add2 << " ";
+
+    MutableListSequence<int> list1 = MutableListSequence<int>(items, 7);
+    ImmutableListSequence<int> list2 = ImmutableListSequence<int>(items, 7);
+    int add11;
+    list1.Reduce(*add, 5, &add11);
+    int add22;
+    list2.Reduce(*add, 6, &add22);
+    std::cout << add11 << " ";
+    std::cout << add22 << " ";
+
+}    

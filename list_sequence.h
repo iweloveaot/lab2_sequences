@@ -69,38 +69,36 @@ public:
         return Get(index);
     }
 
-    // Sequence<T>* Map(T (*func)(T)) const override {
-    //     LinkedList<T> newList;
-    //     int sz = list->GetLength();
-    //     for (int i = 0; i < sz; ++i)
-    //         newList.Append(func(list->Get(i)));
-    //     ListSequenceBase<T>* result = Clone();
-    //     delete result->list;
-    //     result->list = new LinkedList<T>(newList);
-    //     return result;
-    // }
+    Sequence<T>* Map(T (*func)(const T&)) const override {
+        int size = list.GetLength();
+        LinkedList<T> mapped;
+        for (int i = 0; i < size; i++) {
+            mapped.Append(func(list.Get(i)));
+        }
+        Sequence<T>* result = CreateSequence(mapped);
+        return result;
+    }
 
-    // Sequence<T>* Where(bool (*pred)(T)) const override {
-    //     LinkedList<T> filtered;
-    //     int sz = list->GetLength();
-    //     for (int i = 0; i < sz; ++i) {
-    //         T val = list->Get(i);
-    //         if (pred(val))
-    //             filtered.Append(val);
-    //     }
-    //     ListSequenceBase<T>* result = Clone();
-    //     delete result->list;
-    //     result->list = new LinkedList<T>(filtered);
-    //     return result;
-    // }
+    Sequence<T>* Where(bool (*pred)(const T&)) const override {
+        LinkedList<T> filtered;
+        int size = list.GetLength();
+        for (int i = 0; i < size; i++) {
+            T val = list.Get(i);
+            if (pred(val))
+                filtered.Append(val);
+        }
+        Sequence<T>* result = CreateSequence(filtered);
+        return result;
+    }
 
-    // T Reduce(T (*func)(T, T), T init) const override {
-    //     int sz = list->GetLength();
-    //     T acc = init;
-    //     for (int i = 0; i < sz; ++i)
-    //         acc = func(acc, list->Get(i));
-    //     return acc;
-    // }
+    void Reduce(T (*func)(const T&, const T&), const T &init, T *result) const override {
+        int size = list.GetLength();
+        T reduced = init;
+        for (int i = 0; i < size; i++)
+            reduced = func(reduced, list.Get(i));
+        *result = reduced;
+    }
+
 
     // Option<T> FindFirst(bool (*pred)(T)) const override {
     //     int sz = list->GetLength();

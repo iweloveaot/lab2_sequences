@@ -90,7 +90,7 @@ public:
     {
         if (startIndex < 0 || endIndex >= array.GetSize() || startIndex > endIndex)
             throw IndexOutOfRangeException("Invalid subsequence indexes");
-        DynamicArray<T> tmp_array;
+        DynamicArray<T> tmp_array = DynamicArray<T>(endIndex-startIndex+1);
         int tmp_ind = 0;
         for (int i = startIndex; i <= endIndex; i++) {
             tmp_array.Set(tmp_ind, array.Get(i));
@@ -99,43 +99,39 @@ public:
         Sequence<T>* sub_seq = CreateSequence(tmp_array);
         return sub_seq;
     }
-    
-    const T& operator[](int index) const override {
-        return array.Get(index);
+
+    Sequence<T>* Map(T (*func)(const T&)) const override {
+        int size = array.GetSize();
+        DynamicArray<T> mapped = DynamicArray<T>(size);
+        for (int i = 0; i < size; i++) {
+            T val = array.Get(i);
+            mapped.Set(i, func(val));
+        }
+        Sequence<T>* result = CreateSequence(mapped);
+        return result;
     }
 
-    // Sequence<T>* Map(T (*func)(T)) const override {
-    //     LinkedList<T> newList;
-    //     int sz = list->GetLength();
-    //     for (int i = 0; i < sz; ++i)
-    //         newList.Append(func(list->Get(i)));
-    //     ListSequenceBase<T>* result = Clone();
-    //     delete result->list;
-    //     result->list = new LinkedList<T>(newList);
-    //     return result;
-    // }
+    Sequence<T>* Where(bool (*pred)(const T&)) const override {
+        int size = array.GetSize();
+        DynamicArray<T> filtered;
+        for (int i = 0; i < size; i++) {
+            T val = array.Get(i);
+            if (pred(val)) {
+                filtered.Resize(filtered.GetSize() + 1);
+                filtered.Set(filtered.GetSize() - 1, val);
+            }
+        }
+        Sequence<T>* result = CreateSequence(filtered);
+        return result;
+    }
 
-    // Sequence<T>* Where(bool (*pred)(T)) const override {
-    //     LinkedList<T> filtered;
-    //     int sz = list->GetLength();
-    //     for (int i = 0; i < sz; ++i) {
-    //         T val = list->Get(i);
-    //         if (pred(val))
-    //             filtered.Append(val);
-    //     }
-    //     ListSequenceBase<T>* result = Clone();
-    //     delete result->list;
-    //     result->list = new LinkedList<T>(filtered);
-    //     return result;
-    // }
-
-    // T Reduce(T (*func)(T, T), T init) const override {
-    //     int sz = list->GetLength();
-    //     T acc = init;
-    //     for (int i = 0; i < sz; ++i)
-    //         acc = func(acc, list->Get(i));
-    //     return acc;
-    // }
+    void Reduce(T (*func)(const T&, const T&), const T &init, T *result) const override {
+        int size = array.GetSize();
+        T reduced = init;
+        for (int i = 0; i < size; i++)
+            reduced = func(reduced, array.Get(i));
+        *result = reduced;
+    }
 
     // Option<T> FindFirst(bool (*pred)(T)) const override {
     //     int sz = list->GetLength();
@@ -156,6 +152,10 @@ public:
     //     }
     //     return Option<T>();
     // }
+
+    const T& operator[](int index) const override {
+        return array.Get(index);
+    }
 };
 
 #endif /* _LIST_SEQUANCE_H_ */
