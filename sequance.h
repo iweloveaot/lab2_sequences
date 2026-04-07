@@ -1,10 +1,11 @@
 #ifndef _SEQUANCE_H_
 #define _SEQUANCE_H_
 #include "option.h"
+#include "ienumerable.h"
 
 
 template <typename T>
-class Sequence {
+class Sequence : public IEnumerable<T> {
 protected:
     virtual Sequence<T>* Instance() = 0;
     virtual Sequence<T>* AppendImplict(const T &item) = 0;
@@ -40,6 +41,8 @@ public:
     virtual void Reduce(T (*func)(const T&, const T&), const T &init, T *result) const = 0;
     virtual Option<T> TryGetFirst(bool (*pred)(const T&) = nullptr) const = 0;
     virtual Option<T> TryGetLast(bool (*pred)(const T&) = nullptr) const = 0;
+
+    virtual IEnumerator<T>* GetEnumerator() const = 0;
 
     virtual const T& operator[](int index) const = 0;
 

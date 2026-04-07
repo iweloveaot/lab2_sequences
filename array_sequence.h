@@ -151,30 +151,40 @@ public:
         return Option<T>::None();
     }
 
-
-    // Option<T> FindFirst(bool (*pred)(T)) const override {
-    //     int sz = list->GetLength();
-    //     for (int i = 0; i < sz; ++i) {
-    //         T val = list->Get(i);
-    //         if (!pred || pred(val))
-    //             return Option<T>(val);
-    //     }
-    //     return Option<T>();
-    // }
-
-    // Option<T> FindLast(bool (*pred)(T)) const override {
-    //     int sz = list->GetLength();
-    //     for (int i = sz - 1; i >= 0; --i) {
-    //         T val = list->Get(i);
-    //         if (!pred || pred(val))
-    //             return Option<T>(val);
-    //     }
-    //     return Option<T>();
-    // }
+    IEnumerator<T>* GetEnumerator() const override {
+        return new ArrayEnumerator(*this);
+    }
 
     const T& operator[](int index) const override {
         return array.Get(index);
     }
 };
 
-#endif /* _LIST_SEQUANCE_H_ */
+template <typename T>
+class ArrayEnumerator : public IEnumerator<T> {
+private:
+    const ArraySequence<T>& arr_seq;
+    int currentIndex;
+public:
+    ArrayEnumerator(const ArraySequence<T>& s) : arr_seq(s), currentIndex(-1) {}
+        
+    bool HasNext() override {
+        if (currentIndex + 1 < arr_seq.GetLength()) {
+            ++currentIndex;
+            return true;
+        }
+        return false;
+    }
+
+    const T& GetCurrent() const override {
+        if (currentIndex < 0 || currentIndex >= arr_seq.GetLength())
+            throw IndexOutOfRangeException("Enumerator not positioned");
+        return arr_seq.Get(currentIndex);
+    }
+    
+    void Reset() override { 
+        currentIndex = -1; 
+    }
+};
+    
+#endif /* _ARRAY_SEQUANCE_H_ */

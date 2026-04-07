@@ -65,10 +65,6 @@ public:
         return sub_seq;
     }
     
-    const T& operator[](int index) const override {
-        return Get(index);
-    }
-
     Sequence<T>* Map(T (*func)(const T&)) const override {
         int size = list.GetLength();
         LinkedList<T> mapped;
@@ -116,6 +112,15 @@ public:
         }
         return Option<T>::None();
     }
+
+    IEnumerator<T>* GetEnumerator() const override {
+        return list->GetEnumerator();
+    }
+
+    const T& operator[](int index) const override {
+        return Get(index);
+    }
+
 };
 
 #endif /* _LIST_SEQUANCE_H_ */
