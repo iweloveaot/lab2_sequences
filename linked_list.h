@@ -174,53 +174,51 @@ public:
         return *this;
     }
 
+    class LinkedListEnumerator : public IEnumerator<T>
+    {
+    private:
+        const LinkedList<T> list; 
+        const typename LinkedList<T>::Node *current;       
+        bool started;                                
+        
+    public:
+        LinkedListEnumerator(const LinkedList<T> lst) 
+            : list(lst), current(nullptr), started(false) {}
+        
+        bool HasNext() override 
+        {
+            if (!started) 
+            {
+                current = list.first;
+                started = true;
+            } else if (current) 
+            {
+                current = current->next;
+            }
+            return current != nullptr;
+        }
+        
+        const T& GetCurrent() const override
+        {
+            if (!current) 
+            {
+                throw IndexOutOfRangeException("Enumerator not positioned");
+            }
+            return current->data;
+        }
+        
+        void Reset() override 
+        {
+            current = nullptr;
+            started = false;
+        }
+    };
+
     IEnumerator<T>* GetEnumerator() const 
     {
-        return new LinkedListEnumerator<T>(*this);
+        return new LinkedListEnumerator(*this);
     }
    
 };
-
-template <class T>
-class LinkedListEnumerator : public IEnumerator<T>
-{
-private:
-    const LinkedList<T> list; 
-    const typename LinkedList<T>::Node *current;       
-    bool started;                                
-    
-public:
-    LinkedListEnumerator(const LinkedList<T> lst) 
-        : list(lst), current(nullptr), started(false) {}
-    
-    bool HasNext() override 
-    {
-        if (!started) 
-        {
-            current = list->head;
-            started = true;
-        } else if (current) 
-        {
-            current = current->next;
-        }
-        return current != nullptr;
-    }
-    
-    const T& GetCurrent() const override
-    {
-        if (!current) 
-        {
-            throw IndexOutOfRangeException("Enumerator not positioned");
-        }
-        return current->data;
-    }
-    
-    void Reset() override 
-    {
-        current = nullptr;
-        started = false;
-    }
-};
-
 
 #endif // _LINKED_LIST_H_

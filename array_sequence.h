@@ -151,39 +151,38 @@ public:
         return Option<T>::None();
     }
 
+    class ArrayEnumerator : public IEnumerator<T> {
+    private:
+        const ArraySequence<T>& arr_seq;
+        int currentIndex;
+    public:
+        ArrayEnumerator(const ArraySequence<T>& s) : arr_seq(s), currentIndex(-1) {}
+            
+        bool HasNext() override {
+            if (currentIndex + 1 < arr_seq.GetLength()) {
+                ++currentIndex;
+                return true;
+            }
+            return false;
+        }
+
+        const T& GetCurrent() const override {
+            if (currentIndex < 0 || currentIndex >= arr_seq.GetLength())
+                throw IndexOutOfRangeException("Enumerator not positioned");
+            return arr_seq.Get(currentIndex);
+        }
+        
+        void Reset() override { 
+            currentIndex = -1; 
+        }
+    };
+
     IEnumerator<T>* GetEnumerator() const override {
         return new ArrayEnumerator(*this);
     }
 
     const T& operator[](int index) const override {
         return array.Get(index);
-    }
-};
-
-template <typename T>
-class ArrayEnumerator : public IEnumerator<T> {
-private:
-    const ArraySequence<T>& arr_seq;
-    int currentIndex;
-public:
-    ArrayEnumerator(const ArraySequence<T>& s) : arr_seq(s), currentIndex(-1) {}
-        
-    bool HasNext() override {
-        if (currentIndex + 1 < arr_seq.GetLength()) {
-            ++currentIndex;
-            return true;
-        }
-        return false;
-    }
-
-    const T& GetCurrent() const override {
-        if (currentIndex < 0 || currentIndex >= arr_seq.GetLength())
-            throw IndexOutOfRangeException("Enumerator not positioned");
-        return arr_seq.Get(currentIndex);
-    }
-    
-    void Reset() override { 
-        currentIndex = -1; 
     }
 };
     

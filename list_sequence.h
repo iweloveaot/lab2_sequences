@@ -114,7 +114,7 @@ public:
     }
 
     IEnumerator<T>* GetEnumerator() const override {
-        return list->GetEnumerator();
+        return list.GetEnumerator();
     }
 
     const T& operator[](int index) const override {
