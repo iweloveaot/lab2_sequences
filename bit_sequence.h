@@ -1,7 +1,7 @@
 #ifndef _BIT_SEQUENCE_H_
 #define _BIT_SEQUENCE_H_
 
-#include "sequance.h"
+#include "sequence.h"
 #include "dynamic_array.h"
 #include "exceptions.h"
 
@@ -180,10 +180,6 @@ public:
         return bits.GetSize();
     }
     
-    const Bit& operator[](int index) const override {
-        return bits.Get(index);
-    }
-    
     BitSequence* operator~() const {
         BitSequence* result = new BitSequence();
         for (int i = 0; i < bits.GetSize(); ++i) {
@@ -239,7 +235,7 @@ public:
     }
     
     bool GetBit(int index) const {
-        return static_cast<bool>(Get(index));
+        return bool(Get(index));
     }
 };
 

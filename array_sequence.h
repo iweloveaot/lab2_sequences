@@ -3,7 +3,7 @@
 
 #include "exceptions.h"
 #include "dynamic_array.h"
-#include "sequance.h"
+#include "sequence.h"
 
 template <typename T>
 class ArraySequence : public Sequence<T> {
@@ -65,6 +65,13 @@ public:
     ArraySequence(const DynamicArray<T> &arr) : array(DynamicArray<T>(arr)) {}
     ArraySequence(const ArraySequence<T> &other) : array(DynamicArray<T>(other.array)) {}
     ~ArraySequence() override {}
+
+    ArraySequence<T>& operator=(const ArraySequence<T>& other) {
+        if (this != &other) {
+            array = other.array;    
+        }
+        return *this;
+    }
 
     const T& GetFirst() const override {
         if (array.GetSize() == 0)
@@ -181,9 +188,6 @@ public:
         return new ArrayEnumerator(*this);
     }
 
-    const T& operator[](int index) const override {
-        return array.Get(index);
-    }
 };
     
 #endif /* _ARRAY_SEQUANCE_H_ */

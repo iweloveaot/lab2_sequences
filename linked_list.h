@@ -185,37 +185,30 @@ public:
         LinkedListEnumerator(const LinkedList<T> lst) 
             : list(lst), current(nullptr), started(false) {}
         
-        bool HasNext() override 
-        {
-            if (!started) 
-            {
+        bool HasNext() override {
+            if (!started) {
                 current = list.first;
                 started = true;
-            } else if (current) 
-            {
+            } else if (current) {
                 current = current->next;
             }
             return current != nullptr;
         }
         
-        const T& GetCurrent() const override
-        {
-            if (!current) 
-            {
+        const T& GetCurrent() const override {
+            if (!current) {
                 throw IndexOutOfRangeException("Enumerator not positioned");
             }
             return current->data;
         }
         
-        void Reset() override 
-        {
+        void Reset() override {
             current = nullptr;
             started = false;
         }
     };
 
-    IEnumerator<T>* GetEnumerator() const 
-    {
+    IEnumerator<T>* GetEnumerator() const {
         return new LinkedListEnumerator(*this);
     }
    

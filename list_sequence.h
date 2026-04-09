@@ -2,7 +2,7 @@
 #define _LIST_SEQUANCE_H_
 
 #include "linked_list.h"
-#include "sequance.h"
+#include "sequence.h"
 
 template <typename T>
 class ListSequence : public Sequence<T> {
@@ -28,9 +28,11 @@ protected:
     }
 
     virtual Sequence<T>* ConcatImplict(const Sequence<T>* other) override {
-        for (int i = 0; i < other->GetLength(); i++) {
-            list.Append(other->Get(i));
+        IEnumerator<T> *iter = other->GetEnumerator();
+        while (iter->HasNext()) {
+            list.Append(iter->GetCurrent());
         }
+        delete iter;
         return this;
     }
 
@@ -40,6 +42,13 @@ public:
     ListSequence(const LinkedList<T> &lst) : list(LinkedList<T>(lst)) {}
     ListSequence(const ListSequence<T> &other) : list(LinkedList<T>(other.list)) {}
     ~ListSequence() override {}
+
+    ListSequence<T>& operator=(const ListSequence<T>& other) {
+        if (this != &other) {
+            list = other.list;    
+        }
+        return *this;
+    }
 
     const T& GetFirst() const override {
         return list.GetFirst();
@@ -66,33 +75,36 @@ public:
     }
     
     Sequence<T>* Map(T (*func)(const T&)) const override {
-        int size = list.GetLength();
         LinkedList<T> mapped;
-        for (int i = 0; i < size; i++) {
-            mapped.Append(func(list.Get(i)));
+        IEnumerator<T> *iter = GetEnumerator();
+        while (iter->HasNext()) {
+            mapped.Append(func(iter->GetCurrent()));
         }
         Sequence<T>* result = CreateSequence(mapped);
+        delete iter;
         return result;
     }
 
     Sequence<T>* Where(bool (*pred)(const T&)) const override {
         LinkedList<T> filtered;
-        int size = list.GetLength();
-        for (int i = 0; i < size; i++) {
-            T val = list.Get(i);
+        IEnumerator<T> *iter = GetEnumerator();
+        while (iter->HasNext()) {
+            T val = iter->GetCurrent();
             if (pred(val))
                 filtered.Append(val);
         }
         Sequence<T>* result = CreateSequence(filtered);
+        delete iter;
         return result;
     }
 
     void Reduce(T (*func)(const T&, const T&), const T &init, T *result) const override {
-        int size = list.GetLength();
         T reduced = init;
-        for (int i = 0; i < size; i++)
-            reduced = func(reduced, list.Get(i));
+        IEnumerator<T> *iter = GetEnumerator();
+        while (iter->HasNext())
+            reduced = func(reduced, iter->GetCurrent());
         *result = reduced;
+        delete iter;
     }
 
     Option<T> TryGetFirst(bool (*pred)(const T&) = nullptr) const {
@@ -104,7 +116,7 @@ public:
         return Option<T>::None();
     }
 
-    Option<T> TryGetLast(bool (*pred)(const T&) = nullptr) const {
+    Option<T> TryGetLast(bool (*pred)(const T&) = nullptr) const override {
         for (int i = list.GetLength() - 1; i >= 0; --i) {
             const T& val = Get(i);
             if (!pred || pred(val))
@@ -115,10 +127,6 @@ public:
 
     IEnumerator<T>* GetEnumerator() const override {
         return list.GetEnumerator();
-    }
-
-    const T& operator[](int index) const override {
-        return Get(index);
     }
 
 };
