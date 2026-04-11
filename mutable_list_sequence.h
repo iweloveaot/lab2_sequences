@@ -11,7 +11,11 @@ protected:
     }
 
     virtual Sequence<T>* CreateSequence(const LinkedList<T> &lst) const override {
-        return new MutableListSequence<T>(lst);
+        try {
+            return new MutableListSequence<T>(lst);
+        } catch (...) {
+            throw MemoryAllocationException("Failed to create mutable list sequence");
+        }
     }
 
 public:

@@ -7,11 +7,19 @@ template <typename T>
 class ImmutableArraySequence : public ArraySequence<T> {
 protected:
     virtual Sequence<T>* Instance() override {
-        return new ImmutableArraySequence<T>(*this);
+        try {
+            return new ImmutableArraySequence<T>(*this);
+        } catch (...) {
+            throw MemoryAllocationException("Failed to create changed array sequence");
+        }
     }
 
     virtual Sequence<T>* CreateSequence(const DynamicArray<T> &arr) const override {
-        return new ImmutableArraySequence<T>(arr);
+        try {
+            return new ImmutableArraySequence<T>(arr);
+        } catch (...) {
+            throw MemoryAllocationException("Failed to create immutable array sequence");
+        }
     }
 
 public:

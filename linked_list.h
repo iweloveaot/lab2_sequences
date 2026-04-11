@@ -33,7 +33,7 @@ public:
 
     LinkedList(const T *items, int count) : first(nullptr), last(nullptr), length(0) {
         if (count < 0)
-            throw InvalidArgumentException("Negative count");
+            throw InvalidArgumentException("Negative count for linked list:", count);
         for (int i = 0; i < count; i++) {
             Append(items[i]);
         }
@@ -69,7 +69,7 @@ public:
 
     const T& Get(int index) const { 
         if (index < 0 || index >= length)
-            throw IndexOutOfRangeException("Index out of range in LinkedList::Get");
+            throw IndexOutOfRangeException("Index out of range in LinkedList::Get:", index);
         Node *current = first;
         for (int i = 0; i < index; i++)
             current = current->next;
@@ -77,8 +77,12 @@ public:
     }
 
     LinkedList<T>* GetSubList(int startIndex, int endIndex) const {
-        if (startIndex < 0 || endIndex >= length || startIndex > endIndex)
-            throw IndexOutOfRangeException("Invalid sublist indexes");
+        if (startIndex < 0)
+            throw IndexOutOfRangeException("Negative index for sublist:", startIndex);
+        else if (endIndex >= length)
+            throw IndexOutOfRangeException("Invalid sublist end index:", endIndex);
+        else if (startIndex > endIndex)
+            throw IndexOutOfRangeException("Invalid sublist indexes (start > end):", startIndex);
 
         LinkedList<T> *sub_list = nullptr;
         try {
@@ -197,7 +201,7 @@ public:
         
         const T& GetCurrent() const override {
             if (!current) {
-                throw IndexOutOfRangeException("Enumerator not positioned");
+                throw IndexOutOfRangeException("Enumerator not positioned", -1);
             }
             return current->data;
         }
@@ -209,7 +213,11 @@ public:
     };
 
     IEnumerator<T>* GetEnumerator() const {
-        return new LinkedListEnumerator(*this);
+        try {
+            return new LinkedListEnumerator(*this);
+        } catch (...) {
+            throw MemoryAllocationException("Failed to get enumerator for linked list");
+        }
     }
    
 };

@@ -7,11 +7,19 @@ template <typename T>
 class ImmutableListSequence : public ListSequence<T> {
 protected:
     virtual Sequence<T>* Instance() override {
-        return new ImmutableListSequence<T>(*this);
+        try {
+            return new ImmutableListSequence<T>(*this);
+        } catch (...) {
+            throw MemoryAllocationException("Failed to create changed list sequence");
+        }
     }
 
     virtual Sequence<T>* CreateSequence(const LinkedList<T> &lst) const override {
-        return new ImmutableListSequence<T>(lst);
+        try {
+            return new ImmutableListSequence<T>(lst);
+        } catch (...) {
+            throw MemoryAllocationException("Failed to create immutable list sequence");
+        }
     };
 
 public:

@@ -13,7 +13,7 @@ public:
 
 class InvalidArgumentException : public BaseException {
 public:
-    InvalidArgumentException(const char* msg = "Invalid argument")
+    InvalidArgumentException(const char* msg = "Invalid argument", int arg = 0)
         : BaseException(msg) {}    
 };
 
@@ -25,8 +25,14 @@ public:
 
 class IndexOutOfRangeException : public BaseException {
 public:
-    IndexOutOfRangeException(const char* msg = "Index out of range")
+    IndexOutOfRangeException(const char* msg = "Index out of range", int index = 0)
         : BaseException(msg) {}    
+};
+
+class NullReferenceException : public BaseException {
+public:
+    NullReferenceException(const char* msg = "Null reference")
+        : BaseException(msg) {}
 };
 
 class MemoryAllocationException : public BaseException {

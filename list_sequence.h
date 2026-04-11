@@ -28,6 +28,8 @@ protected:
     }
 
     virtual Sequence<T>* ConcatImplict(const Sequence<T>* other) override {
+        if (other == nullptr)
+            throw NullReferenceException("Null pointer in ListSequence::Concat");  
         IEnumerator<T> *iter = other->GetEnumerator();
         while (iter->HasNext()) {
             list.Append(iter->GetCurrent());

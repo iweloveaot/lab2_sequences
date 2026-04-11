@@ -65,10 +65,11 @@ private:
     BitSequence* applyBitwise(const BitSequence& other,
                               Bit (Bit::*op)(const Bit&) const) const {
         if (GetLength() != other.GetLength()) {
-            throw InvalidArgumentException("BitSequence lengths must match for bitwise operations");
+            throw InvalidArgumentException("BitSequence lengths must match for bitwise operations:", GetLength());
         }
-
         BitSequence* result = new BitSequence();
+        if (result == nullptr)
+            throw MemoryAllocationException("Error during bit operation");
         for (int i = 0; i < GetLength(); ++i) {
             result->AppendImplict((Get(i).*op)(other.Get(i)));
         }
@@ -106,11 +107,17 @@ public:
             tmp_array.Set(tmp_ind, this->Get(i));
             tmp_ind++;
         }
-        return new BitSequence(tmp_array);
+        try {
+            return new BitSequence(tmp_array);
+        } catch (...) {
+            throw MemoryAllocationException("Error while getting bit subsequence");
+        }
     }
 
     BitSequence* operator~() const {
         BitSequence* result = new BitSequence();
+        if (result == nullptr)
+            throw MemoryAllocationException("Error during bit operation ~");
         for (int i = 0; i < GetLength(); ++i) {
             result->AppendImplict(~this->Get(i));
         }

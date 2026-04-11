@@ -51,7 +51,9 @@ protected:
         return this;
     }
 
-    virtual Sequence<T>* ConcatImplict(const Sequence<T>* other) override {  
+    virtual Sequence<T>* ConcatImplict(const Sequence<T>* other) override {
+        if (other == nullptr)
+            throw NullReferenceException("Null pointer in ArraySequence::Concat");  
         for (int i = 0; i < other->GetLength(); i++) {
             AppendImplict(other->Get(i));
         }

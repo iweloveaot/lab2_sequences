@@ -11,7 +11,11 @@ protected:
     }
 
     virtual Sequence<T>* CreateSequence(const DynamicArray<T> &arr) const override {
-        return new MutableArraySequence<T>(arr);
+        try {
+            return new MutableArraySequence<T>(arr);
+        } catch (...) {
+            throw MemoryAllocationException("Failed to create mutable array sequence");
+        }
     }
 
 public:
