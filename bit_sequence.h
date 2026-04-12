@@ -16,6 +16,13 @@ public:
         return *this;
     }
 
+    Bit(int val) : value(val != 0) {}
+
+    Bit& operator=(int val) {
+        value = (val != 0);
+        return *this;
+    }
+
     operator bool() const {
         return value;
     }
@@ -78,6 +85,13 @@ private:
 
 public:
     BitSequence() : MutableArraySequence<Bit>() {}
+
+    BitSequence(const int* items, int count) : MutableArraySequence<Bit>() {
+        if (count < 0) throw InvalidArgumentException("Negative count");
+        for (int i = 0; i < count; ++i) {
+            AppendImplict(Bit(items[i]));
+        }
+    }    
 
     BitSequence(const bool* items, int count) : MutableArraySequence<Bit>() {
         if (count < 0) throw InvalidArgumentException("Negative count");
