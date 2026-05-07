@@ -73,6 +73,21 @@ BitSequence* BitSequence::applyBitwise(const BitSequence& other,
 
 BitSequence::BitSequence() : MutableArraySequence<Bit>() {}
 
+BitSequence::BitSequence(const unsigned char* bytes, int bitCount) 
+    : MutableArraySequence<Bit>() {
+    if (bitCount < 0) 
+        throw InvalidArgumentException("Negative bit count");
+    if (bytes == nullptr && bitCount > 0)
+        throw InvalidArgumentException("Null pointer with positive bit count");
+    
+    for (int bitIndex = 0; bitIndex < bitCount; ++bitIndex) {
+        int byteIndex = bitIndex / 8;
+        int bitOffset = bitIndex % 8;
+        bool bitValue = (bytes[byteIndex] >> (7 - bitOffset)) & 1;
+        AppendImplict(Bit(bitValue));
+    }
+}
+
 BitSequence::BitSequence(const int* items, int count) : MutableArraySequence<Bit>() {
     if (count < 0) throw InvalidArgumentException("Negative count");
     for (int i = 0; i < count; ++i) {

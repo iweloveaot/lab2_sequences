@@ -332,6 +332,28 @@ TEST(test_bit_sequence_bitwise_not) {
     delete inverted;
 }
 
+TEST(test_bit_sequence_byte_creation) {
+    unsigned char data1[] = {0b10110010};
+    BitSequence seq1(data1, 8);
+    ASSERT_EQ(seq1.GetLength(), 8);
+    ASSERT_EQ(seq1.Get(0), Bit(1));
+    ASSERT_EQ(seq1.Get(1), Bit(0));
+    ASSERT_EQ(seq1.Get(4), Bit(0));
+    ASSERT_EQ(seq1.Get(7), Bit(0));
+
+    unsigned char data2[] = {0xFF, 0x00, 0xAA};
+    BitSequence seq2(data2, 20);
+    ASSERT_EQ(seq2.GetLength(), 20);
+    for (int i = 0; i < 8; ++i) ASSERT_EQ(seq2.Get(i), Bit(1));   
+    for (int i = 8; i < 16; ++i) ASSERT_EQ(seq2.Get(i), Bit(0));
+    ASSERT_EQ(seq2.Get(16), Bit(1));
+    ASSERT_EQ(seq2.Get(17), Bit(0));
+    ASSERT_EQ(seq2.Get(18), Bit(1));
+    ASSERT_EQ(seq2.Get(19), Bit(0));
+
+    ASSERT_THROW(BitSequence(data1, -1), InvalidArgumentException);
+}
+
 TEST(test_bit_sequence_bitwise_and) {
     bool bits1[] = {true, false, true, false};
     bool bits2[] = {true, true, false, false};
@@ -529,6 +551,7 @@ int runAllTests() {
     
     // BitSequence
     RUN_TEST(test_bit_sequence_creation);
+    RUN_TEST(test_bit_sequence_byte_creation);
     RUN_TEST(test_bit_sequence_bitwise_not);
     RUN_TEST(test_bit_sequence_bitwise_and);
     RUN_TEST(test_bit_sequence_bitwise_or_xor);

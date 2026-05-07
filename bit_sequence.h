@@ -37,6 +37,7 @@ private:
 
 public:
     BitSequence();
+    BitSequence(const unsigned char* bytes, int bitCount);
     BitSequence(const int* items, int count);
     BitSequence(const bool* items, int count);
     BitSequence(const Bit* items, int count);

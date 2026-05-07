@@ -91,11 +91,12 @@ void showSequenceMenu(const std::string& typeName) {
 void showBitSequenceMenu() {
     std::cout << "\n--- BitSequence Operations ---\n";
     std::cout << "1. Create from bool array\n";
-    std::cout << "2. Bitwise NOT (~)\n";
-    std::cout << "3. Bitwise AND (&)\n";
-    std::cout << "4. Bitwise OR (|)\n";
-    std::cout << "5. Bitwise XOR (^)\n";
-    std::cout << "6. GetSubsequence\n";
+    std::cout << "2. Create from byte array\n";
+    std::cout << "3. Bitwise NOT (~)\n";
+    std::cout << "4. Bitwise AND (&)\n";
+    std::cout << "5. Bitwise OR (|)\n";
+    std::cout << "6. Bitwise XOR (^)\n";
+    std::cout << "7. GetSubsequence\n";
     std::cout << "0. Back to main menu\n";
     std::cout << "Choice: ";
 }
@@ -368,6 +369,73 @@ std::vector<int> createBitArray() {
     return bits;
 }
 
+// Вспомогательная функция: парсинг бинарной строки в unsigned char
+unsigned char parseBinaryString(const std::string& binStr) {
+    std::string s = binStr;
+    // Убираем префикс 0b или 0B если есть
+    if (s.size() >= 2 && s[0] == '0' && (s[1] == 'b' || s[1] == 'B')) {
+        s = s.substr(2);
+    }
+    
+    // Проверяем, что строка содержит только 0 и 1
+    for (char c : s) {
+        if (c != '0' && c != '1') {
+            throw std::invalid_argument("Invalid binary digit: " + std::string(1, c));
+        }
+    }
+    
+    // Дополняем до 8 бит слева нулями если нужно
+    while (s.length() < 8) {
+        s = "0" + s;
+    }
+    if (s.length() > 8) {
+        throw std::invalid_argument("Binary value exceeds 8 bits: " + binStr);
+    }
+    
+    // Парсим в число
+    unsigned char result = 0;
+    for (char c : s) {
+        result = (result << 1) | (c - '0');
+    }
+    return result;
+}
+
+// Основная функция создания массива байтов
+std::vector<unsigned char> createByteArray() {
+    std::cout << "Enter bytes as binary values (e.g., 0b10110010 0b01001111, space-separated): ";
+    std::string input;
+    std::getline(std::cin, input);
+    if (input.empty())
+        std::getline(std::cin, input);
+    
+    std::vector<unsigned char> bytes;
+    std::stringstream ss(input);
+    std::string binVal;
+    
+    while (ss >> binVal) {
+        try {
+            unsigned char byte = parseBinaryString(binVal);
+            bytes.push_back(byte);
+        } catch (const std::exception& e) {
+            std::cout << "Error parsing '" << binVal << "': " << e.what() << "\n";
+            return {};
+        }
+    }
+    
+    if (!bytes.empty()) {
+        std::cout << "Enter total bit count (<= " << bytes.size() * 8 << "): ";
+        int bitCount;
+        std::cin >> bitCount;
+        std::cin.ignore(10000, '\n');
+        if (bitCount > static_cast<int>(bytes.size() * 8) || bitCount < 0) {
+            std::cout << "Invalid bit count!\n";
+            return {};
+        }
+        return bytes;
+    }
+    return {};
+}
+
 void bitSequenceDemo() {
     BitSequence* seq = nullptr;
     BitSequence* seq2 = nullptr;
@@ -376,7 +444,7 @@ void bitSequenceDemo() {
     do {
         showBitSequenceMenu();
         while (!(std::cin >> choice)) {
-            std::cout << "Invalid input. Please enter command 0 to 6: ";
+            std::cout << "Invalid input. Please enter command 0 to 7: ";
             std::cin.clear();
             std::cin.ignore(10000, '\n');
         }
@@ -392,28 +460,25 @@ void bitSequenceDemo() {
                     break;
                 }
                 case 2: {
-                    if (!seq) { 
-                        std::cout << "Create sequence first!\n"; 
-                        break; 
+                    delete seq;
+                    std::cout << "Create from byte array:\n";
+                    std::vector<unsigned char> bytes = createByteArray();
+                    if (bytes.empty()) {
+                        std::cout << "Invalid input!\n";
+                        break;
                     }
-                    auto* result = ~(*seq);
-                    printSequence(result, "NOT");
-                    delete result;
+                    int bitCount = bytes.size() * 8; // или запросить отдельно
+                    seq = new BitSequence(bytes.data(), bitCount);
+                    printSequence(seq, "Created from bytes");
                     break;
                 }
                 case 3: {
                     if (!seq) { 
                         std::cout << "Create sequence first!\n"; 
                         break; 
-                    } 
-
-                    delete seq2;
-                    std::cout << "Create second sequence:\n";
-                    std::vector<int> bits = createBitArray();
-                    seq2 = new BitSequence(bits.data(), static_cast<int>(bits.size()));
-                    
-                    auto* result = (*seq) & (*seq2);
-                    printSequence(result, "AND");
+                    }
+                    auto* result = ~(*seq);
+                    printSequence(result, "NOT");
                     delete result;
                     break;
                 }
@@ -424,12 +489,26 @@ void bitSequenceDemo() {
                     } 
 
                     delete seq2;
-                    std::cout << "Create second sequence:\n";
-                    std::vector<int> bits = createBitArray();
-                    seq2 = new BitSequence(bits.data(), static_cast<int>(bits.size()));
+                    std::cout << "Create second sequence (1 - from bool array, 2 - from byte array): ";
+                    int srcChoice;
+                    std::cin >> srcChoice;
+                    std::cin.ignore(10000, '\n');
 
-                    auto* result = (*seq) | (*seq2);
-                    printSequence(result, "OR");
+                    if (srcChoice == 2) {
+                        std::vector<unsigned char> bytes = createByteArray();
+                        if (bytes.empty()) {
+                            std::cout << "Invalid input!\n";
+                            break;
+                        }
+                        int bitCount = bytes.size() * 8;
+                        seq2 = new BitSequence(bytes.data(), bitCount);
+                    } else {
+                        std::vector<int> bits = createBitArray();
+                        seq2 = new BitSequence(bits.data(), static_cast<int>(bits.size()));
+                    }
+                    
+                    auto* result = (*seq) & (*seq2);
+                    printSequence(result, "AND");
                     delete result;
                     break;
                 }
@@ -438,18 +517,62 @@ void bitSequenceDemo() {
                         std::cout << "Create sequence first!\n"; 
                         break; 
                     } 
+
+                    delete seq2;
+                    std::cout << "Create second sequence (1 - from bool array, 2 - from byte array): ";
+                    int srcChoice;
+                    std::cin >> srcChoice;
+                    std::cin.ignore(10000, '\n');
+
+                    if (srcChoice == 2) {
+                        std::vector<unsigned char> bytes = createByteArray();
+                        if (bytes.empty()) {
+                            std::cout << "Invalid input!\n";
+                            break;
+                        }
+                        int bitCount = bytes.size() * 8;
+                        seq2 = new BitSequence(bytes.data(), bitCount);
+                    } else {
+                        std::vector<int> bits = createBitArray();
+                        seq2 = new BitSequence(bits.data(), static_cast<int>(bits.size()));
+                    }
+
+                    auto* result = (*seq) | (*seq2);
+                    printSequence(result, "OR");
+                    delete result;
+                    break;
+                }
+                case 6: {
+                    if (!seq) { 
+                        std::cout << "Create sequence first!\n"; 
+                        break; 
+                    } 
                     
                     delete seq2;
-                    std::cout << "Create second sequence:\n";
-                    std::vector<int> bits = createBitArray();
-                    seq2 = new BitSequence(bits.data(), static_cast<int>(bits.size()));
+                    std::cout << "Create second sequence (1 - from bool array, 2 - from byte array): ";
+                    int srcChoice;
+                    std::cin >> srcChoice;
+                    std::cin.ignore(10000, '\n');
+
+                    if (srcChoice == 2) {
+                        std::vector<unsigned char> bytes = createByteArray();
+                        if (bytes.empty()) {
+                            std::cout << "Invalid input!\n";
+                            break;
+                        }
+                        int bitCount = bytes.size() * 8;
+                        seq2 = new BitSequence(bytes.data(), bitCount);
+                    } else {
+                        std::vector<int> bits = createBitArray();
+                        seq2 = new BitSequence(bits.data(), static_cast<int>(bits.size()));
+                    }
 
                     auto* result = (*seq) ^ (*seq2);
                     printSequence(result, "XOR");
                     delete result;
                     break;
                 }
-                case 6: {
+                case 7: {
                     if (!seq) { 
                         std::cout << "Create sequence first!\n"; 
                         break; 
